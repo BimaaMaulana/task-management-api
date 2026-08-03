@@ -1,59 +1,149 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Task Management API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+REST API untuk mengelola project dan task tim, dibangun dengan Laravel dan
+Laravel Sanctum. Menyediakan autentikasi berbasis token, proteksi route
+lewat middleware, dan struktur resource yang konsisten untuk project dan
+task yang saling berelasi.
 
-## About Laravel
+## Fitur
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Registrasi & login dengan token akses (Laravel Sanctum)
+- Middleware `auth:sanctum` melindungi seluruh endpoint sensitif
+- CRUD penuh untuk **Projects** (`apiResource`)
+- CRUD **Tasks** yang bersarang di bawah Project (nested resource)
+- Kontrak respons JSON yang konsisten di seluruh endpoint
+- Sudah diuji end-to-end lewat Postman
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Tech Stack
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+| Komponen | Teknologi |
+|---|---|
+| Framework | Laravel 12 |
+| Bahasa | PHP 8.2 |
+| Autentikasi | Laravel Sanctum |
+| Database | MySQL |
+| Testing manual | Postman |
 
-## Learning Laravel
+## Referensi Endpoint
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### Publik
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+| Method | Endpoint | Deskripsi |
+|---|---|---|
+| POST | `/api/register` | Daftarkan akun baru |
+| POST | `/api/login` | Tukar kredensial dengan token akses |
 
-## Laravel Sponsors
+### Terproteksi (butuh header `Authorization: Bearer {token}`)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+| Method | Endpoint | Deskripsi |
+|---|---|---|
+| POST | `/api/logout` | Cabut token akses aktif |
+| GET | `/api/me` | Ambil data user yang sedang login |
+| GET | `/api/projects` | Daftar semua project |
+| POST | `/api/projects` | Buat project baru |
+| GET | `/api/projects/{project}` | Detail satu project |
+| PUT/PATCH | `/api/projects/{project}` | Perbarui project |
+| DELETE | `/api/projects/{project}` | Hapus project |
+| GET | `/api/projects/{project}/tasks` | Daftar task dalam satu project |
+| POST | `/api/projects/{project}/tasks` | Tambah task ke project |
+| GET | `/api/tasks/{task}` | Detail satu task |
+| PUT/PATCH | `/api/tasks/{task}` | Perbarui task |
+| DELETE | `/api/tasks/{task}` | Hapus task |
 
-### Premium Partners
+## Contoh Request & Response
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+**Login**
 
-## Contributing
+```http
+POST /api/login
+Content-Type: application/json
+Accept: application/json
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+{
+  "email": "admin@example.com",
+  "password": "password"
+}
+```
 
-## Code of Conduct
+Response `200 OK`:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```json
+{
+  "message": "Login successful",
+  "user": {
+    "id": 1,
+    "name": "Bima Maulana",
+    "email": "admin@example.com",
+    "role": "admin"
+  },
+  "token": "2|R9AGYR7Y..."
+}
+```
 
-## Security Vulnerabilities
+Token yang didapat dipakai untuk mengakses endpoint terproteksi lewat header:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```
+Authorization: Bearer 2|R9AGYR7Y...
+```
 
-## License
+## Instalasi & Menjalankan Secara Lokal
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Prasyarat
+
+- PHP >= 8.2
+- Composer
+- MySQL
+- Laragon / XAMPP / server lokal PHP lainnya
+
+### Langkah
+
+```bash
+git clone https://github.com/bimaamaulana/task-management-api.git
+cd task-management-api
+composer install
+cp .env.example .env
+php artisan key:generate
+```
+
+Buka file `.env`, sesuaikan konfigurasi database:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=task_management_api
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+Jalankan migrasi database:
+
+```bash
+php artisan migrate
+```
+
+Jalankan server:
+
+```bash
+php artisan serve
+```
+
+API akan tersedia di `http://127.0.0.1:8000/api`.
+
+## Testing
+
+Seluruh endpoint sudah diuji manual menggunakan Postman, mencakup alur
+register → login → akses endpoint terproteksi dengan token → logout.
+
+## Catatan Deployment
+
+Project ini adalah backend API murni dan membutuhkan server yang mendukung
+PHP serta MySQL (misalnya Railway, Render, atau shared hosting berbasis
+PHP). GitHub Pages tidak dapat menjalankan aplikasi ini karena hanya
+melayani file statis.
+
+## Author
+
+**Bima Maulana**
+Dibuat sebagai bagian dari persiapan sertifikasi kompetensi Database
+Administrator (skema LSP/BNSP).
