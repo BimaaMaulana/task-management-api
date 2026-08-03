@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<title>Preview — Task Management API Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0E2229; --bg-elevated: #14313A; --panel: #FBF7EC; --panel-line: #E4DCC8;
+  --ink: #EAF3F1; --ink-dim: #93B0AD; --ink-faint: #5D7C79; --ink-on-panel: #1E2B28;
+  --ink-on-panel-dim: #6B7975; --accent-amber: #E8A33D; --accent-mint: #63C792;
+  --accent-blue: #7EB4E0; --accent-coral: #E8735A;
+  --font-display: 'Space Grotesk', sans-serif; --font-body: 'IBM Plex Sans', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace; --border: 1px solid rgba(234,243,241,0.1);
+}
+* { box-sizing: border-box; }
+body { margin:0; background: var(--bg); color: var(--ink); font-family: var(--font-body); -webkit-font-smoothing: antialiased; }
+.page { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+.nav { display:flex; align-items:center; justify-content:space-between; padding: 28px 0; }
+.nav__logo { font-family: var(--font-display); font-size:20px; font-weight:600; letter-spacing:-0.02em; }
+.nav__logo-dot { color: var(--accent-amber); }
+.nav__links { display:flex; gap:28px; font-size:14px; color: var(--ink-dim); }
+.nav__links a { text-decoration:none; }
+.hero { display:grid; grid-template-columns: 1.1fr 1fr; gap:56px; align-items:center; padding: 48px 0 88px; }
+.eyebrow { font-family: var(--font-mono); font-size:13px; color: var(--accent-amber); text-transform:uppercase; letter-spacing:0.08em; margin:0 0 16px; }
+.hero__title { font-family: var(--font-display); font-size: clamp(36px,5vw,56px); line-height:1.05; letter-spacing:-0.02em; margin:0 0 20px; }
+.hero__desc { font-size:16px; line-height:1.65; color: var(--ink-dim); max-width:46ch; margin:0 0 32px; }
+.hero__cta { display:flex; gap:12px; margin-bottom:44px; flex-wrap:wrap; }
+.btn { font-family: var(--font-body); font-size:14px; font-weight:600; padding:12px 22px; border-radius:8px; text-decoration:none; display:inline-flex; align-items:center; }
+.btn--primary { background: var(--accent-amber); color:#1B1305; }
+.btn--ghost { background:transparent; color: var(--ink); border: var(--border); }
+.hero__stats { display:flex; gap:36px; margin:0; }
+.hero__stats dt { font-size:12px; color: var(--ink-faint); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:4px; }
+.hero__stats dd { font-family: var(--font-display); font-size:22px; margin:0; }
+.hero__visual { display:flex; justify-content:center; }
+.console { width:100%; max-width:420px; background: var(--panel); color: var(--ink-on-panel); border-radius:14px; overflow:hidden; box-shadow: 0 24px 60px -20px rgba(0,0,0,0.5); border: 1px solid var(--panel-line); }
+.console__bar { display:flex; align-items:center; gap:8px; padding:12px 16px; background:#F1EBDC; border-bottom:1px solid var(--panel-line); }
+.console__dot { width:9px; height:9px; border-radius:50%; display:inline-block; }
+.console__bar-title { margin-left:8px; font-family: var(--font-mono); font-size:12px; color: var(--ink-on-panel-dim); }
+.console__body { padding:20px; }
+.console__line { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+.console__path { font-family: var(--font-mono); font-size:14px; }
+.console__code { font-family: var(--font-mono); font-size:12.5px; line-height:1.6; background:#F1EBDC; border:1px solid var(--panel-line); border-radius:8px; padding:12px 14px; margin:0 0 16px; overflow-x:auto; white-space:pre; }
+.console__run { width:100%; background:#1E2B28; color:#F1EBDC; border:none; border-radius:8px; padding:11px; font-size:13px; font-weight:600; margin-bottom:16px; }
+.console__run:disabled { opacity:0.6; }
+.console__hint { font-size:13px; color: var(--ink-on-panel-dim); margin:0; }
+.console__hint--pulse { animation: pulse 1s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+.console__status { font-family: var(--font-mono); font-size:12.5px; color: var(--ink-on-panel-dim); margin-bottom:8px; }
+.console__status-code { color: var(--accent-mint); font-weight:600; }
+.badge { font-family: var(--font-mono); font-size:11px; font-weight:600; letter-spacing:0.03em; padding:3px 8px; border-radius:5px; white-space:nowrap; }
+.badge--get { background: rgba(99,199,146,0.18); color: var(--accent-mint); }
+.badge--post { background: rgba(232,163,61,0.18); color: var(--accent-amber); }
+.badge--put, .badge--patch { background: rgba(126,180,224,0.18); color: var(--accent-blue); }
+.badge--delete { background: rgba(232,115,90,0.18); color: var(--accent-coral); }
+.section-label { font-family: var(--font-mono); font-size:13px; text-transform:uppercase; letter-spacing:0.08em; color: var(--ink-faint); margin:0 0 24px; }
+.features { padding:40px 0; }
+.features__grid { display:grid; grid-template-columns: repeat(2,1fr); gap:1px; background: rgba(234,243,241,0.1); border: var(--border); border-radius:12px; overflow:hidden; }
+.feature { background: var(--bg-elevated); padding:26px; }
+.feature h3 { font-family: var(--font-display); font-size:17px; margin:0 0 8px; font-weight:600; }
+.feature p { font-size:14px; line-height:1.6; color: var(--ink-dim); margin:0; }
+.endpoints { padding:48px 0; }
+.endpoints__table { border: var(--border); border-radius:12px; overflow:hidden; }
+.endpoints__row { display:grid; grid-template-columns: 90px 1fr 1.6fr 100px; gap:16px; align-items:center; padding:13px 18px; border-bottom:1px solid rgba(234,243,241,0.08); }
+.endpoints__row:last-child { border-bottom:none; }
+.endpoints__row--head { background: var(--bg-elevated); font-family: var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:0.06em; color: var(--ink-faint); }
+.endpoints__path { font-family: var(--font-mono); font-size:13px; }
+.endpoints__desc { font-size:13.5px; color: var(--ink-dim); }
+.endpoints__auth { font-size:12.5px; color: var(--ink-faint); }
+.stack { padding:40px 0 56px; }
+.stack__list { list-style:none; display:flex; flex-wrap:wrap; gap:10px; padding:0; margin:0; }
+.stack__list li { font-family: var(--font-mono); font-size:13px; padding:8px 14px; border-radius:999px; border: var(--border); color: var(--ink-dim); }
+.more { padding:0 0 72px; }
+.more__card { border:1px dashed rgba(234,243,241,0.22); border-radius:12px; padding:28px; display:flex; align-items:center; gap:16px; color: var(--ink-faint); font-size:14px; }
+.more__plus { font-family: var(--font-display); font-size:22px; color: var(--ink-faint); }
+.footer { border-top: var(--border); padding:24px 0 40px; font-size:13px; color: var(--ink-faint); }
+@media (max-width:780px) {
+  .hero { grid-template-columns:1fr; padding-top:24px; }
+  .features__grid { grid-template-columns:1fr; }
+  .endpoints__row { grid-template-columns: 74px 1fr; row-gap:6px; }
+  .endpoints__desc, .endpoints__auth { grid-column: 1/-1; }
+  .endpoints__row--head { display:none; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="nav">
+    <span class="nav__logo">bima<span class="nav__logo-dot">.</span>dev</span>
+    <nav class="nav__links"><a href="#">Project</a><a href="#">Endpoints</a><a href="#">Stack</a></nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero__copy">
+        <p class="eyebrow">Backend Project · Laravel + Sanctum</p>
+        <h1 class="hero__title">Task Management API</h1>
+        <p class="hero__desc">REST API untuk mengelola project dan task tim, lengkap dengan autentikasi token, proteksi route, dan struktur resource yang rapi. Dites end-to-end lewat Postman, siap dikonsumsi frontend apa pun.</p>
+        <dl class="hero__stats">
+          <div><dt>Endpoints</dt><dd>11</dd></div>
+          <div><dt>Resource</dt><dd>3</dd></div>
+          <div><dt>Auth</dt><dd>Sanctum</dd></div>
+        </dl>
+      </div>
+
+      <div class="hero__visual">
+        <div class="console">
+          <div class="console__bar">
+            <span class="console__dot" style="background:var(--accent-coral)"></span>
+            <span class="console__dot" style="background:var(--accent-amber)"></span>
+            <span class="console__dot" style="background:var(--accent-mint)"></span>
+            <span class="console__bar-title">request.http</span>
+          </div>
+          <div class="console__body">
+            <div class="console__line">
+              <span class="badge badge--post">POST</span>
+              <span class="console__path">/api/login</span>
+            </div>
+            <pre class="console__code">{
+  "email": "admin@example.com",
+  "password": "••••••••"
+}</pre>
+            <button class="console__run" id="runBtn">Jalankan request</button>
+            <div id="responseArea">
+              <p class="console__hint" id="hintText">Klik "Jalankan request" untuk lihat respons.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="features">
+      <p class="section-label">Yang dikerjakan</p>
+      <div class="features__grid">
+        <div class="feature"><h3>Autentikasi berbasis token</h3><p>Laravel Sanctum menerbitkan personal access token saat login, dicabut otomatis saat logout.</p></div>
+        <div class="feature"><h3>Proteksi route middleware</h3><p>Seluruh endpoint sensitif dibungkus auth:sanctum, menolak akses tanpa token yang valid.</p></div>
+        <div class="feature"><h3>Struktur resource konsisten</h3><p>Projects memakai apiResource penuh; Tasks bersarang di bawah project untuk relasi yang jelas.</p></div>
+        <div class="feature"><h3>Kontrak respons yang rapi</h3><p>Setiap respons mengikuti bentuk JSON yang konsisten, siap dikonsumsi frontend apa pun.</p></div>
+      </div>
+    </section>
+
+    <section class="endpoints">
+      <p class="section-label">Referensi endpoint</p>
+      <div class="endpoints__table">
+        <div class="endpoints__row endpoints__row--head"><span>Method</span><span>Path</span><span>Deskripsi</span><span>Auth</span></div>
+        <div class="endpoints__row"><span><span class="badge badge--post">POST</span></span><span class="endpoints__path">/api/register</span><span class="endpoints__desc">Daftarkan akun baru</span><span class="endpoints__auth">— Publik</span></div>
+        <div class="endpoints__row"><span><span class="badge badge--post">POST</span></span><span class="endpoints__path">/api/login</span><span class="endpoints__desc">Tukar kredensial dengan token akses</span><span class="endpoints__auth">— Publik</span></div>
+        <div class="endpoints__row"><span><span class="badge badge--post">POST</span></span><span class="endpoints__path">/api/logout</span><span class="endpoints__desc">Cabut token akses aktif</span><span class="endpoints__auth">🔒 Token</span></div>
+        <div class="endpoints__row"><span><span class="badge badge--get">GET</span></span><span class="endpoints__path">/api/me</span><span class="endpoints__desc">Ambil data user yang sedang login</span><span class="endpoints__auth">🔒 Token</span></div>
+        <div class="endpoints__row"><span><span class="badge badge--get">GET</span></span><span class="endpoints__path">/api/projects</span><span class="endpoints__desc">Daftar semua project</span><span class="endpoints__auth">🔒 Token</span></div>
+        <div class="endpoints__row"><span><span class="badge badge--post">POST</span></span><span class="endpoints__path">/api/projects</span><span class="endpoints__desc">Buat project baru</span><span class="endpoints__auth">🔒 Token</span></div>
+        <div class="endpoints__row"><span><span class="badge badge--get">GET</span></span><span class="endpoints__path">/api/projects/{id}/tasks</span><span class="endpoints__desc">Daftar task dalam satu project</span><span class="endpoints__auth">🔒 Token</span></div>
+        <div class="endpoints__row"><span><span class="badge badge--post">POST</span></span><span class="endpoints__path">/api/projects/{id}/tasks</span><span class="endpoints__desc">Tambah task ke project</span><span class="endpoints__auth">🔒 Token</span></div>
+        <div class="endpoints__row"><span><span class="badge badge--put">PUT</span></span><span class="endpoints__path">/api/tasks/{id}</span><span class="endpoints__desc">Perbarui seluruh data task</span><span class="endpoints__auth">🔒 Token</span></div>
+        <div class="endpoints__row"><span><span class="badge badge--patch">PATCH</span></span><span class="endpoints__path">/api/tasks/{id}</span><span class="endpoints__desc">Perbarui sebagian data task</span><span class="endpoints__auth">🔒 Token</span></div>
+        <div class="endpoints__row"><span><span class="badge badge--delete">DELETE</span></span><span class="endpoints__path">/api/tasks/{id}</span><span class="endpoints__desc">Hapus task</span><span class="endpoints__auth">🔒 Token</span></div>
+      </div>
+    </section>
+
+    <section class="stack">
+      <p class="section-label">Teknologi</p>
+      <ul class="stack__list">
+        <li>Laravel 12</li><li>PHP 8.2</li><li>Sanctum</li><li>MySQL</li><li>Postman</li><li>React</li><li>Vite</li>
+      </ul>
+    </section>
+
+    <section class="more">
+      <div class="more__card">
+        <span class="more__plus">+</span>
+        <p>Project berikutnya — Sistem Perpustakaan Kampus — segera menyusul</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer"><p>Dibangun oleh Bima Maulana · 2026</p></footer>
+</div>
+
+<script>
+const btn = document.getElementById('runBtn');
+const area = document.getElementById('responseArea');
+btn.addEventListener('click', () => {
+  btn.disabled = true;
+  btn.textContent = 'Mengirim…';
+  area.innerHTML = '<p class="console__hint console__hint--pulse">Menunggu server…</p>';
+  setTimeout(() => {
+    btn.disabled = false;
+    btn.textContent = 'Kirim lagi';
+    area.innerHTML = `
+      <div class="console__status"><span class="console__status-code">200</span> OK · 1.7s</div>
+      <pre class="console__code">{
+  "message": "Login successful",
+  "user": {
+    "id": 1,
+    "name": "Bima Maulana",
+    "email": "admin@example.com",
+    "role": "admin"
+  },
+  "token": "2|R9AGYR7Y••••••••••••••••••••a8c806"
+}</pre>`;
+  }, 900);
+});
+</script>
+</body>
+</html>
